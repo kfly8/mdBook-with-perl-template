@@ -108,7 +108,7 @@ function playground_text(playground, hidden = true) {
         .then(response => response.json())
         .then(response => {
           if (response.program_error !== '') {
-            result_block.innerText = "Playground Communication: " + response.program_error
+            result_block.innerText = response.program_error
           } else {
             const output = response.program_output
             if (output === '') {
