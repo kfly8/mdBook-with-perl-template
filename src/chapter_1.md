@@ -8,16 +8,28 @@ fn main() {
 }
 ```
 
+```rust
+fn main() {
+
+    println("HELLO WORLD\n");
+}
+```
+
 こんにちは
 
+<pre class="playground">
+  <code class="language-perl editable">
+    print "HELLO WORLD!!"
+  </code>
+</pre>
 
-```perl,editable
-print "HELLO"
-```
+----
 
-```perl
-print "HELLO"
-```
+<pre class="playground">
+  <code class="language-perl">
+    print "HELLO WORLD!!"
+  </code>
+</pre>
 
 
 HELLOってでるよ
