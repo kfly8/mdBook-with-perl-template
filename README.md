@@ -1,9 +1,10 @@
 ## これは何？
 
-Markdownからドキュメントを生成する[mdBook](https://github.com/rust-lang/mdBook)というRustでできたツールを利用した
-Perlの日本語ドキュメントのためのテンプレートです。
+Markdownからドキュメントを生成する[mdBook](https://github.com/rust-lang/mdBook)というRustでできたツールがあります。
+このリポジトリはmdBookを利用したPerlの日本語ドキュメントのためのテンプレートです。
 
-このテンプレートを利用すれば、次のようなPerlのコードの実行結果を確かめながら読めるドキュメントが作れます。
+このテンプレートを利用すれば、次のようなPerlのコードの実行結果を確かめながら読めるドキュメントが作れます。}
+
 ```perl
 print "HELLO WORLD";
 ```
