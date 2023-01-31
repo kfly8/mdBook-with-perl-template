@@ -26,25 +26,26 @@ function playground_text(playground, hidden = true) {
     }
 
     var playgrounds = Array.from(document.querySelectorAll(".playground"));
-    if (playgrounds.length > 0) {
-        fetch_with_timeout("https://play.rust-lang.org/meta/crates", {
-            headers: {
-                'Content-Type': "application/json",
-            },
-            method: 'POST',
-            mode: 'cors',
-        })
-        .then(response => response.json())
-        .then(response => {
-            // get list of crates available in the rust playground
-            let playground_crates = response.crates.map(item => item["id"]);
-            playgrounds.forEach(block => handle_crate_list_update(block, playground_crates));
-        });
-    }
+    playgrounds.forEach(block => handle_crate_list_update(block));
 
-    function handle_crate_list_update(playground_block, playground_crates) {
+//    if (playgrounds.length > 0) {
+//        fetch_with_timeout("https://play.rust-lang.org/meta/crates", {
+//            headers: {
+//                'Content-Type': "application/json",
+//            },
+//            method: 'POST',
+//            mode: 'cors',
+//        })
+//        .then(response => response.json())
+//        .then(response => {
+//            // get list of crates available in the rust playground
+//            let playground_crates = response.crates.map(item => item["id"]);
+//        });
+//    }
+
+    function handle_crate_list_update(playground_block) {
         // update the play buttons after receiving the response
-        update_play_button(playground_block, playground_crates);
+        update_play_button(playground_block);
 
         // and install on change listener to dynamically update ACE editors
         if (window.ace) {
@@ -52,7 +53,7 @@ function playground_text(playground, hidden = true) {
             if (code_block.classList.contains("editable")) {
                 let editor = window.ace.edit(code_block);
                 editor.addEventListener("change", function (e) {
-                    update_play_button(playground_block, playground_crates);
+                    update_play_button(playground_block);
                 });
                 // add Ctrl-Enter command to execute rust code
                 editor.commands.addCommand({
@@ -61,7 +62,7 @@ function playground_text(playground, hidden = true) {
                         win: "Ctrl-Enter",
                         mac: "Ctrl-Enter"
                     },
-                    exec: _editor => run_rust_code(playground_block)
+                    exec: _editor => run_perl_code(playground_block)
                 });
             }
         }
@@ -69,7 +70,7 @@ function playground_text(playground, hidden = true) {
 
     // updates the visibility of play button based on `no_run` class and
     // used crates vs ones available on http://play.rust-lang.org
-    function update_play_button(pre_block, playground_crates) {
+    function update_play_button(pre_block) {
         var play_button = pre_block.querySelector(".play-button");
 
         // skip if code is `no_run`
@@ -78,28 +79,31 @@ function playground_text(playground, hidden = true) {
             return;
         }
 
-        // get list of `extern crate`'s from snippet
-        var txt = playground_text(pre_block);
-        var re = /extern\s+crate\s+([a-zA-Z_0-9]+)\s*;/g;
-        var snippet_crates = [];
-        var item;
-        while (item = re.exec(txt)) {
-            snippet_crates.push(item[1]);
-        }
+//        // get list of `extern crate`'s from snippet
+//        var txt = playground_text(pre_block);
+//        var re = /extern\s+crate\s+([a-zA-Z_0-9]+)\s*;/g;
+//        var snippet_crates = [];
+//        var item;
+//        while (item = re.exec(txt)) {
+//            snippet_crates.push(item[1]);
+//        }
 
-        // check if all used crates are available on play.rust-lang.org
-        var all_available = snippet_crates.every(function (elem) {
-            return playground_crates.indexOf(elem) > -1;
-        });
+//        // check if all used crates are available on play.rust-lang.org
+//        var all_available = snippet_crates.every(function (elem) {
+//            return playground_crates.indexOf(elem) > -1;
+//        });
 
-        if (all_available) {
-            play_button.classList.remove("hidden");
-        } else {
-            play_button.classList.add("hidden");
-        }
+        const all_available = true
+
+// FIXME
+//        if (all_available) {
+//            play_button.classList.remove("hidden");
+//        } else {
+//            play_button.classList.add("hidden");
+//        }
     }
 
-    function run_rust_code(code_block) {
+    function run_perl_code(code_block) {
         var result_block = code_block.querySelector(".result");
         if (!result_block) {
             result_block = document.createElement('code');
@@ -109,27 +113,26 @@ function playground_text(playground, hidden = true) {
         }
 
         let text = playground_text(code_block);
-        let classes = code_block.querySelector('code').classList;
-        let edition = "2015";
-        if(classes.contains("edition2018")) {
-            edition = "2018";
-        } else if(classes.contains("edition2021")) {
-            edition = "2021";
-        }
-        var params = {
-            version: "stable",
-            optimize: "0",
-            code: text,
-            edition: edition
-        };
+        //let classes = code_block.querySelector('code').classList;
+        //let edition = "2015";
+        //if(classes.contains("edition2018")) {
+        //    edition = "2018";
+        //} else if(classes.contains("edition2021")) {
+        //    edition = "2021";
+        //}
 
-        if (text.indexOf("#![feature") !== -1) {
-            params.version = "nightly";
-        }
+        const compiler = 'perl-5.34.0'
+
+        const params = {
+            code: text,
+            compiler: compiler,
+          options: '',
+          'compiler-option-raw': ''
+        };
 
         result_block.innerText = "Running...";
 
-        fetch_with_timeout("https://play.rust-lang.org/evaluate.json", {
+        fetch_with_timeout("https://wandbox.org/api/compile.json", {
             headers: {
                 'Content-Type': "application/json",
             },
@@ -139,15 +142,20 @@ function playground_text(playground, hidden = true) {
         })
         .then(response => response.json())
         .then(response => {
-            if (response.result.trim() === '') {
-                result_block.innerText = "No output";
-                result_block.classList.add("result-no-output");
-            } else {
-                result_block.innerText = response.result;
-                result_block.classList.remove("result-no-output");
+          if (response.program_error !== '') {
+            result_block.innerText = "Playground Communication: " + response.program_error
+          } else {
+            const output = response.program_output
+            if (output === '') {
+              result_block.innerText = "No output";
+              result_block.classList.add("result-no-output");
             }
+            else {
+              result_block.innerText = output;
+              result_block.classList.remove("result-no-output");
+            }
+          }
         })
-        .catch(error => result_block.innerText = "Playground Communication: " + error.message);
     }
 
     // Syntax highlighting Configuration
@@ -162,11 +170,11 @@ function playground_text(playground, hidden = true) {
         .filter(function (node) {return !node.parentElement.classList.contains("header"); });
 
     if (window.ace) {
-        // language-rust class needs to be removed for editable
+        // language-perl class needs to be removed for editable
         // blocks or highlightjs will capture events
         code_nodes
             .filter(function (node) {return node.classList.contains("editable"); })
-            .forEach(function (block) { block.classList.remove('language-rust'); });
+            .forEach(function (block) { block.classList.remove('language-perl'); });
 
         code_nodes
             .filter(function (node) {return !node.classList.contains("editable"); })
@@ -179,7 +187,7 @@ function playground_text(playground, hidden = true) {
     // even if highlighting doesn't apply
     code_nodes.forEach(function (block) { block.classList.add('hljs'); });
 
-    Array.from(document.querySelectorAll("code.language-rust")).forEach(function (block) {
+    Array.from(document.querySelectorAll("code.language-perl")).forEach(function (block) {
 
         var lines = Array.from(block.querySelectorAll('.boring'));
         // If no lines were hidden, return
@@ -253,7 +261,7 @@ function playground_text(playground, hidden = true) {
 
         buttons.insertBefore(runCodeButton, buttons.firstChild);
         runCodeButton.addEventListener('click', function (e) {
-            run_rust_code(pre_block);
+            run_perl_code(pre_block);
         });
 
         if (window.playground_copyable) {
