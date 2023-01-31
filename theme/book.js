@@ -25,6 +25,11 @@ function playground_text(playground, hidden = true) {
         ]);
     }
 
+    Array.from(document.querySelectorAll("code.language-perl")).forEach(function (block) {
+      const pre = block.parentElement;
+      pre.classList.add('playground')
+    })
+
     var playgrounds = Array.from(document.querySelectorAll(".playground"));
     playgrounds.forEach(block => handle_crate_list_update(block));
 

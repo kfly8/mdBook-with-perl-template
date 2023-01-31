@@ -17,19 +17,15 @@ fn main() {
 
 こんにちは
 
-<pre class="playground">
-  <code class="language-perl editable">
-    print "HELLO WORLD!!"
-  </code>
-</pre>
+```perl,editable
+print "HELLO WORLD!!"
+```
 
 ----
 
-<pre class="playground">
-  <code class="language-perl">
-    print "HELLO WORLD!!"
-  </code>
-</pre>
+```perl
+print "HELLO WORLD!!"
+```
 
 
 HELLOってでるよ
