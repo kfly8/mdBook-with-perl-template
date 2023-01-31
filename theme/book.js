@@ -33,21 +33,6 @@ function playground_text(playground, hidden = true) {
     var playgrounds = Array.from(document.querySelectorAll(".playground"));
     playgrounds.forEach(block => handle_crate_list_update(block));
 
-//    if (playgrounds.length > 0) {
-//        fetch_with_timeout("https://play.rust-lang.org/meta/crates", {
-//            headers: {
-//                'Content-Type': "application/json",
-//            },
-//            method: 'POST',
-//            mode: 'cors',
-//        })
-//        .then(response => response.json())
-//        .then(response => {
-//            // get list of crates available in the rust playground
-//            let playground_crates = response.crates.map(item => item["id"]);
-//        });
-//    }
-
     function handle_crate_list_update(playground_block) {
         // update the play buttons after receiving the response
         update_play_button(playground_block);
@@ -60,7 +45,7 @@ function playground_text(playground, hidden = true) {
                 editor.addEventListener("change", function (e) {
                     update_play_button(playground_block);
                 });
-                // add Ctrl-Enter command to execute rust code
+                // add Ctrl-Enter command to execute perl code
                 editor.commands.addCommand({
                     name: "run",
                     bindKey: {
@@ -73,8 +58,8 @@ function playground_text(playground, hidden = true) {
         }
     }
 
-    // updates the visibility of play button based on `no_run` class and
-    // used crates vs ones available on http://play.rust-lang.org
+    // updates the visibility of play button based on `no_run` class
+    // TODO: 利用できないCPANモジュールがあった場合は、利用できないようにする
     function update_play_button(pre_block) {
         var play_button = pre_block.querySelector(".play-button");
 
@@ -84,28 +69,8 @@ function playground_text(playground, hidden = true) {
             return;
         }
 
-//        // get list of `extern crate`'s from snippet
-//        var txt = playground_text(pre_block);
-//        var re = /extern\s+crate\s+([a-zA-Z_0-9]+)\s*;/g;
-//        var snippet_crates = [];
-//        var item;
-//        while (item = re.exec(txt)) {
-//            snippet_crates.push(item[1]);
-//        }
-
-//        // check if all used crates are available on play.rust-lang.org
-//        var all_available = snippet_crates.every(function (elem) {
-//            return playground_crates.indexOf(elem) > -1;
-//        });
-
-        const all_available = true
-
-// FIXME
-//        if (all_available) {
-//            play_button.classList.remove("hidden");
-//        } else {
-//            play_button.classList.add("hidden");
-//        }
+        // 利用できないCPANモジュールがあった場合、hiddenもしくはdisableしたい
+        //play_button.classList.remove("hidden");
     }
 
     function run_perl_code(code_block) {
@@ -118,25 +83,20 @@ function playground_text(playground, hidden = true) {
         }
 
         let text = playground_text(code_block);
-        //let classes = code_block.querySelector('code').classList;
-        //let edition = "2015";
-        //if(classes.contains("edition2018")) {
-        //    edition = "2018";
-        //} else if(classes.contains("edition2021")) {
-        //    edition = "2021";
-        //}
 
+        // TODO: 利用できるperlのバージョンを変更できるようにしたい
         const compiler = 'perl-5.34.0'
 
         const params = {
             code: text,
             compiler: compiler,
-          options: '',
-          'compiler-option-raw': ''
+            options: '',
+           'compiler-option-raw': ''
         };
 
         result_block.innerText = "Running...";
 
+        // TODO: wandboxに依存せず自前でサーバを建てたい
         fetch_with_timeout("https://wandbox.org/api/compile.json", {
             headers: {
                 'Content-Type': "application/json",

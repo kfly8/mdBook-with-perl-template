@@ -1,9 +1,9 @@
 [book]
 authors = ["kfly8"]
-language = "en"
+language = "ja"
 multilingual = false
 src = "src"
-title = "Perl Test"
+title = "Perlドキュメントテスト"
 
 [output.html.playground]
 editable = true
