@@ -5,11 +5,11 @@ Markdownからドキュメントを生成する[mdBook](https://github.com/rust-
 
 このテンプレートを利用すれば、次のようなPerlのコードの実行結果を確かめながら読めるドキュメントが作れます。
 
-```perl
-print "HELLO WORLD";
-```
 
-このテンプレートの利用方法は、このテンプレートをforkし、forkしたテンプレートからリポジトリを作成するのが良いと思います。
+![synopsis](https://user-images.githubusercontent.com/722500/215801113-af2c797f-a0c6-4a0d-bfbc-36c19ab3993e.gif)
+
+
+利用方法は、このテンプレートをforkし、forkしたテンプレートからリポジトリを作成するのが良いと思います。
 mdBookの利用方法は、mdBookのドキュメントを参照してください。
 
 perlの実行には、現在、[wandbox](https://github.com/melpon/wandbox)を利用しています。
