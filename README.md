@@ -13,4 +13,4 @@ Markdownからドキュメントを生成する[mdBook](https://github.com/rust-
 mdBookの利用方法は、mdBookのドキュメントを参照してください。
 
 perlの実行には、現在、[wandbox](https://github.com/melpon/wandbox)を利用しています。
-perlのバージョンは、5.34.0です。
+perlのバージョンは、5.36.0です。
